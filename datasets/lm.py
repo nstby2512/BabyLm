@@ -169,8 +169,8 @@ class WikiText2(LanguageModelingDataset):
     dirname = 'wikitext-2'
 
     @classmethod
-    def splits(cls, text_field, root='.data', train='childes.train',
-               validation='childes.dev', test='childes.test',
+    def splits(cls, text_field, root='.data', train='simple_wiki.train',
+               validation='simple_wiki.dev', test='simple_wiki.test',
                **kwargs):
         """Create dataset objects for splits of the WikiText-2 dataset.
         This is the most flexible way to use the dataset.
