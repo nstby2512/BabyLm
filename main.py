@@ -17,7 +17,7 @@ from torch.optim import AdamW, SGD
 from torch.optim.lr_scheduler import ReduceLROnPlateau, LambdaLR
 
 import torchtext
-from datasets.lm import PennTreebank, WikiText2
+from datasets.lm import PennTreebank, WikiText2, bnc_spoken
 from datasets.data import BucketIterator, BPTTIterator
 
 from args import get_args
@@ -27,8 +27,6 @@ from utils import Pack
 from utils import plot_counts
 
 import wandb
-import os
-
 
 valid_schedules = ["reducelronplateau"]
 
@@ -353,6 +351,8 @@ def main():
         Dataset = PennTreebank
     elif args.dataset == "wikitext2":
         Dataset = WikiText2
+    elif args.dataset == "bnc_spoken":
+        Dataset = bnc_spoken
 
     train, valid, test = Dataset.splits(
         TEXT,

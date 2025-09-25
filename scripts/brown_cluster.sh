@@ -12,6 +12,8 @@ wsjinput=.data/PTB/ptb.txt
 
 supwsjinput=.data/PTB/sup/ptb.train.txt
 
+bncinput=.data/bnc_spoken/bnc_spoken.train
+bncfinput=.data/bnc_spoken/bnc_spoken.train.flat
 if  [[ "$1" == "lm256" ]]; then
     $l_cluster --text $input --c 256 --output_dir clusters/lm-256
 elif [[ "$1" == "lm128" ]]; then
@@ -108,6 +110,13 @@ elif [[ "$1" == "w2flm4" ]]; then
 elif [[ "$1" == "w2falm128" ]]; then
     $l_cluster --text $w2fainput --c 128 --output_dir clusters/w2falm-128
 
+#bnc_spoken
+elif [[ "$1" == "bncflm128" ]]; then
+    $l_cluster --text $bncfinput --c 128 --output_dir clusters/bncflm-128
+elif [[ "$1" == "bnclm128" ]]; then
+    $l_cluster --text $bncinput --c 128 --output_dir clusters/bnclm-128  
+
+ 
 else
     echo "Improper argument"
 fi

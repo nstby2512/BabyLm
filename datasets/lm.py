@@ -165,12 +165,13 @@ class PennTreebank(LanguageModelingDataset):
 
 class WikiText2(LanguageModelingDataset):
 
+    urls = ['https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-v1.zip']
     name = 'wikitext-2'
     dirname = 'wikitext-2'
 
     @classmethod
-    def splits(cls, text_field, root='.data', train='simple_wiki.train',
-               validation='simple_wiki.dev', test='simple_wiki.test',
+    def splits(cls, text_field, root='.data', train='wiki.train.tokens',
+               validation='wiki.valid.tokens', test='wiki.test.tokens',
                **kwargs):
         """Create dataset objects for splits of the WikiText-2 dataset.
         This is the most flexible way to use the dataset.
@@ -219,29 +220,56 @@ class WikiText2(LanguageModelingDataset):
             device=device)
 
 
+class bnc_spoken(LanguageModelingDataset):
 
-#add BabyLm 0915
-class BabyLM(LanguageModelingDataset):
-    name = 'babylm'
+
+    name = 'bnc_spoken'
     dirname = ''
 
     @classmethod
-    def splits(cls, text_field, root='.data',
-               train='babylm_10M.train',
-               validation='babylm_10M.dev',
-               test='babylm_10M.test',
+    def splits(cls, text_field, root='.data', train='bnc_spoken.train',
+               validation='bnc_spoken.dev', test='bnc_spoken.test',
                **kwargs):
-        return super(BabyLM, cls).splits(
+        """Create dataset objects for splits of the Penn Treebank dataset.
+
+        Arguments:
+            text_field: The field that will be used for text data.
+            root: The root directory where the data files will be stored.
+            train: The filename of the train data. Default: 'ptb.train.txt'.
+            validation: The filename of the validation data, or None to not
+                load the validation set. Default: 'ptb.valid.txt'.
+            test: The filename of the test data, or None to not load the test
+                set. Default: 'ptb.test.txt'.
+        """
+        return super(bnc_spoken, cls).splits(
             root=root, train=train, validation=validation, test=test,
             text_field=text_field, articles=False, **kwargs)
 
     @classmethod
     def iters(cls, batch_size=32, bptt_len=35, device=0, root='.data',
               vectors=None, **kwargs):
+        """Create iterator objects for splits of the Penn Treebank dataset.
+
+        This is the simplest way to use the dataset, and assumes common
+        defaults for field, vocabulary, and iterator parameters.
+
+        Arguments:
+            batch_size: Batch size.
+            bptt_len: Length of sequences for backpropagation through time.
+            device: Device to create batches on. Use -1 for CPU and None for
+                the currently active GPU device.
+            root: The root directory where the data files will be stored.
+            wv_dir, wv_type, wv_dim: Passed to the Vocab constructor for the
+                text field. The word vectors are accessible as
+                train.dataset.fields['text'].vocab.vectors.
+            Remaining keyword arguments: Passed to the splits method.
+        """
         TEXT = data.Field()
+
         train, val, test = cls.splits(TEXT, root=root, **kwargs)
+
         TEXT.build_vocab(train, vectors=vectors)
+
         return data.BPTTIterator.splits(
             (train, val, test), batch_size=batch_size, bptt_len=bptt_len,
             device=device)
-
